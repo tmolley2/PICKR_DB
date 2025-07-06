@@ -15,3 +15,4 @@ Pipfile.lock
 # IDE/editor
 .vscode/
 *.swp
+.ssh/
