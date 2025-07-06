@@ -26,4 +26,17 @@ class PrimerPairSerializer(serializers.ModelSerializer):
             # Add the specific citation lists for the details section
             'f_reg_pmcid_list', 'f_inv_pmcid_list',
             'r_reg_pmcid_list', 'r_inv_pmcid_list',
+            
+            #cross specificity of genes
+            'f_cross_specificity_0', 'r_cross_specificity_0',
+            'f_cross_specificity_0_seq', 'r_cross_specificity_0_seq',
+            'f_cross_specificity_1', 'r_cross_specificity_1',
+            'f_cross_specificity_1_seq', 'r_cross_specificity_1_seq',
+            'f_cross_specificity_2', 'r_cross_specificity_2',
+            'f_cross_specificity_2_seq', 'r_cross_specificity_2_seq',
+            'f_cross_specificity_3', 'r_cross_specificity_3',
+            'f_cross_specificity_3_seq', 'r_cross_specificity_3_seq',
+            'f_cross_specificity_4', 'r_cross_specificity_4',
+            'f_cross_specificity_4_seq', 'r_cross_specificity_4_seq'
+        
         ]

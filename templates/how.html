@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How to use PICKR - Primer PICKR</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .content-section h3 {
+            font-size: 1.5rem; /* text-2xl */
+            font-weight: 700; /* font-bold */
+            color: #1f2937; /* text-gray-800 */
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e5e7eb; /* border-gray-200 */
+        }
+        .content-section h4 {
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600; /* font-semibold */
+            color: #374151; /* text-gray-700 */
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+        }
+        .content-section p, .content-section ul {
+            color: #4b5563; /* text-gray-600 */
+            line-height: 1.75;
+        }
+        .content-section ul {
+            list-style-position: inside;
+            list-style-type: disc;
+            padding-left: 0.5rem;
+        }
+        .content-section code {
+            background-color: #f3f4f6; /* bg-gray-100 */
+            color: #111827; /* text-gray-900 */
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm sticky top-0 z-20">
+        <div class="container mx-auto px-4 sm:px-6">
+            <div class="flex justify-between items-center py-4">
+                <a href="{% url 'home' %}" class="flex items-center space-x-2 text-gray-800 hover:text-blue-600 transition">
+                    <i class="fas fa-dna text-blue-600 text-2xl"></i>
+                    <h1 class="text-2xl font-bold">Primer PICKR</h1>
+                </a>
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="{% url 'about' %}" class="text-gray-600 hover:text-blue-600">About</a>
+                    <a href="{% url 'how' %}" class="text-gray-600 hover:text-blue-600">How to use PICKR</a>
+                    <a href="{% url 'api_docs' %}" class="text-gray-600 hover:text-blue-600">API</a>
+                    <a href="{% url 'contact' %}" class="text-gray-600 hover:text-blue-600">Contact</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto max-w-screen-xl px-4 sm:px-6 py-12">
+        <div class="max-w-4xl mx-auto">
+            <header class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-800">How to Use Primer PICKR</h2>
+                <p class="text-gray-600 mt-2 text-lg">A guide to finding the perfect primers for your experiment.</p>
+            </header>
+
+            <div class="space-y-12">
+
+                <!-- Getting Started -->
+                <div class="bg-white rounded-xl shadow-lg p-8 content-section">
+                    <h3>Getting Started: Finding Your Primers</h3>
+                    <p>Primer PICKR is designed to be simple. The main page features a search bar where you can enter the official gene symbol for your target (e.g., <code>TP53</code>, <code>GAPDH</code>, <code>Actb</code>). Once you've entered a gene, the search button will become active.</p>
+
+                    <h4>Selecting a Species</h4>
+                    <p>Directly above the filters, you'll find a dropdown menu to select the species for your search. Currently, we support Human and Mouse. Make sure you select the correct species before searching to get relevant results.</p>
+
+                    <h4>Using Filters</h4>
+                    <p>The filter panel on the left allows you to narrow your search based on specific experimental needs. You can set ranges for melting temperature (Tm), GC content, primer length, and the final amplicon length. You can also filter by the number of literature citations or the maximum allowed difference between the forward and reverse primer melting temperatures (ΔTm).</p>
+                </div>
+
+                <!-- Interpreting the Results -->
+                <div class="bg-white rounded-xl shadow-lg p-8 content-section">
+                    <h3>Interpreting the Results: The Primer Card</h3>
+                    <p>After a successful search, results are displayed as a list of primer cards, ranked by our comprehensive PICKR Score. Here's a breakdown of what you see on each card:</p>
+                    <ul class="space-y-2 mt-4">
+                        <li><strong>Rank:</strong> The overall rank of the primer pair for that gene based on its PICKR Score.</li>
+                        <li><strong>Sequences:</strong> The forward (5' → 3') and reverse (5' → 3') primer sequences.</li>
+                        <li><strong>Combined Citations:</strong> The total number of papers in our database that cite either the forward or reverse primer.</li>
+                        <li><strong>Amplicon Length:</strong> The expected length of the PCR product in base pairs.</li>
+                        <li><strong>Avg Tm:</strong> The average melting temperature of the two primers.</li>
+                        <li><strong>PICKR Score:</strong> The overall score from 0-100, combining evidence from literature, biophysical properties, and the synergy between them. A higher score is better.</li>
+                    </ul>
+                     <p class="mt-4">If a pair has been cited together in the same paper(s), a green "Cited Together" badge will appear, which is a strong indicator of a functional pair.</p>
+                </div>
+
+                <!-- A Guide to Picking Primers -->
+                <div class="bg-white rounded-xl shadow-lg p-8 content-section">
+                    <h3>A Guide to Picking the Best Primers</h3>
+                    <p>While the PICKR Score is a powerful guide, the "best" primer pair often depends on your specific experimental needs. Here’s a checklist of what to look for when you expand a primer card for more details:</p>
+
+                    <h4>1. Prioritize Strong Evidence</h4>
+                    <p>Look for pairs with a high <strong>PICKR Score</strong> and, most importantly, a <strong>Shared Citations</strong> count greater than zero. This is the strongest evidence that the pair works well together in a lab setting.</p>
+
+                    <h4>2. Check for Off-Target Matches</h4>
+                    <p>The details for each primer will show the number of potential off-target matches in the genome. </p>
+                    <ul class="space-y-2 mt-2">
+                        <li><span class="font-semibold text-green-600">0 Matches:</span> This is ideal. The primer is highly specific.</li>
+                        <li><span class="font-semibold text-yellow-600">>0 Matches:</span> This primer may bind to other genes. Review the details carefully.</li>
+                        <li><span class="font-semibold text-red-600">Identical Matches:</span> If you see a bold red warning for an "Identical sequence match", the primer is a perfect match for another gene and should generally be avoided to prevent non-specific amplification.</li>
+                    </ul>
+
+                    <h4>3. Evaluate Biophysical Properties</h4>
+                    <p>In the "Pair Details" section, look for:</p>
+                     <ul class="space-y-2 mt-2">
+                        <li><strong>Low ΔTm:</strong> The difference in melting temperature between the two primers should be as small as possible, ideally less than 2°C, for efficient amplification.</li>
+                        <li><strong>Low Complementarity:</strong> The "Self-Complementarity" and "Pair Complementarity" scores should be low to avoid the formation of primer-dimers and hairpins.</li>
+                    </ul>
+
+                    <h4>4. Consider Your Application</h4>
+                     <p>Finally, ensure the primer characteristics match your experiment:</p>
+                     <ul class="space-y-2 mt-2">
+                        <li><strong>For qPCR:</strong> Shorter amplicon lengths (e.g., 70-200 bp) are generally preferred.</li>
+                        <li><strong>For Cloning/Sanger Sequencing:</strong> Longer amplicon lengths may be necessary to capture the region of interest.</li>
+                    </ul>
+
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white mt-16 py-8 border-t">
+        <div class="container mx-auto px-4 sm:px-6 text-center text-gray-500">
+            <p>&copy; 2025 Primer PICKR. All rights reserved.</p>
+            <p class="text-sm">Data sourced from PubMed. Not for clinical use.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

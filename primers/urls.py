@@ -1,6 +1,6 @@
 # primers/urls.py
 from django.urls import path
-from .views import home, contact, about, api_docs, PrimerPairListAPIView, GeneSuggestionsAPIView
+from .views import home, how, contact, about, api_docs, PrimerPairListAPIView, GeneSuggestionsAPIView
 
 urlpatterns = [
     # Page views
@@ -8,6 +8,7 @@ urlpatterns = [
     path('contact/', contact, name='contact'),
     path('about/', about, name='about'),
     path('api-docs/', api_docs, name='api_docs'),
+    path('how/', how, name='how'),
 
     # API endpoints
     path('api/primers/', PrimerPairListAPIView.as_view(), name='primer-list'),
