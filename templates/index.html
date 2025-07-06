@@ -4,6 +4,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Primer PICKR</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 100 100'%3e%3cpath d='M45,15 C20,25 20,75 45,85' stroke='%232563eb' stroke-width='8' fill='none' stroke-linecap='round'/%3e%3cpath d='M55,15 C80,25 80,75 55,85' stroke='%232563eb' stroke-width='8' fill='none' stroke-linecap='round'/%3e%3cline x1='45' y1='25' x2='55' y2='25' stroke='%232563eb' stroke-width='8' stroke-linecap='round'/%3e%3cline x1='42' y1='35' x2='58' y2='35' stroke='%232563eb' stroke-width='8' stroke-linecap='round'/%3e%3cline x1='40' y1='45' x2='60' y2='45' stroke='%232563eb' stroke-width='8' stroke-linecap='round'/%3e%3cline x1='42' y1='55' x2='58' y2='55' stroke='%232563eb' stroke-width='8' stroke-linecap='round'/%3e%3cline x1='45' y1='65' x2='55' y2='65' stroke='%232563eb' stroke-width='8' stroke-linecap='round'/%3e%3cline x1='48' y1='75' x2='52' y2='75' stroke='%232563eb' stroke-width='8' stroke-linecap='round'/%3e%3c/svg%3e">
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Primer PICKR is a free, powerful tool for scientists to find and evaluate the best RT-PCR primer pairs for any human or mouse gene, aggregated and scored from millions of PubMed papers.">
+    <meta name="keywords" content="PCR primers, RT-PCR, qPCR, primer design, primer database, Homo sapiens, Mus musculus, gene expression, scientific research, bioinformatics">
+    <meta name="author" content="EnglerLab">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://englerlab.pythonanywhere.com/">
+    <meta property="og:title" content="Primer PICKR - The Ultimate PCR Primer Database">
+    <meta property="og:description" content="Find and evaluate the best RT-PCR primer pairs for any human or mouse gene, aggregated and scored from millions of PubMed papers.">
+    <meta property="og:image" content="https://placehold.co/1200x630/2563eb/ffffff?text=Primer+PICKR">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://englerlab.pythonanywhere.com/">
+    <meta property="twitter:title" content="Primer PICKR - The Ultimate PCR Primer Database">
+    <meta property="twitter:description" content="Find and evaluate the best RT-PCR primer pairs for any human or mouse gene, aggregated and scored from millions of PubMed papers.">
+    <meta property="twitter:image" content="https://placehold.co/1200x630/2563eb/ffffff?text=Primer+PICKR">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -54,6 +77,7 @@
                 </a>
                 <div class="hidden md:flex items-center space-x-4">
                     <a href="{% url 'about' %}" class="text-gray-600 hover:text-blue-600">About</a>
+                    <a href="{% url 'how' %}" class="text-gray-600 hover:text-blue-600">How to use PICKR</a>
                     <a href="{% url 'api_docs' %}" class="text-gray-600 hover:text-blue-600">API</a>
                     <a href="{% url 'contact' %}" class="text-gray-600 hover:text-blue-600">Contact</a>
                 </div>
@@ -65,6 +89,9 @@
             </div>
         </div>
     </nav>
+    
+    <span id="api-primers-url" data-url="{% url 'primer-list' %}" style="display: none;"></span>
+    <span id="api-suggestions-url" data-url="{% url 'gene-suggestions' %}" style="display: none;"></span>
 
     <div class="container mx-auto max-w-screen-2xl px-4 sm:px-6">
         <div class="flex flex-col md:flex-row gap-8">
@@ -88,7 +115,7 @@
                             </div>
 
                             <!-- Tm Filter -->
-                            <div x-data="{ min: 55, max: 65 }" @reset-filters.window="min=55; max=65">
+                            <div x-data="{ min: 50, max: 70 }" @reset-filters.window="min=55; max=65">
                                 <label class="block text-sm font-medium text-gray-700">Melt Temp (°C)</label>
                                 <div class="flex justify-between text-sm text-gray-500">
                                     <span x-text="min.toFixed(1)"></span>
@@ -97,8 +124,15 @@
                                  <input type="range" name="min_tm" min="40" max="80" step="0.5" x-model.number="min">
                                  <input type="range" name="max_tm" min="40" max="80" step="0.5" x-model.number="max">
                             </div>
+                            
+                            <!-- Delta Tm Filter -->
+                            <div>
+                                <label for="max_delta_tm" class="block text-sm font-medium text-gray-700">Max Tm Difference (°C)</label>
+                                <input type="number" id="max_delta_tm" name="max_delta_tm" min="0" step="0.1" placeholder="e.g., 2.0" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                            </div>
+
                              <!-- GC Content Filter -->
-                            <div x-data="{ min: 40, max: 60 }" @reset-filters.window="min=40; max=60">
+                            <div x-data="{ min: 30, max: 70 }" @reset-filters.window="min=40; max=60">
                                 <label class="block text-sm font-medium text-gray-700">GC Content (%)</label>
                                 <div class="flex justify-between text-sm text-gray-500">
                                      <span x-text="min"></span>
@@ -109,7 +143,7 @@
                             </div>
 
                             <!-- Primer Length Filter -->
-                             <div x-data="{ min: 18, max: 25 }" @reset-filters.window="min=18; max=25">
+                             <div x-data="{ min: 18, max: 30 }" @reset-filters.window="min=18; max=25">
                                 <label class="block text-sm font-medium text-gray-700">Primer Length (bp)</label>
                                 <div class="flex justify-between text-sm text-gray-500">
                                      <span x-text="min"></span>
@@ -159,7 +193,7 @@
                 </div>
 
                 <div class="text-center text-gray-600 mb-8 -mt-2 text-sm md:text-base">
-                    Found <strong class="text-blue-600">4,794,617</strong> primers from <strong class="text-blue-600">344,740</strong> papers to generate and score <strong class="text-green-600">41,035</strong> primer pairs across <strong class="text-green-600">2,993</strong> genes.
+                    Found <strong class="text-blue-600">4,794,617</strong> primers from <strong class="text-blue-600">344,740</strong> papers to generate and score <strong class="text-green-600">40,035</strong> primer pairs across <strong class="text-green-600">2,993</strong> genes.
                 </div>
 
                 <div id="message" class="min-h-[40px] text-center text-red-600 font-semibold p-4 mb-4"></div>
@@ -176,7 +210,9 @@
                             <select id="sort-by" name="sort_by" class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
                                 <option value="score">Best PICKR Score</option>
                                 <option value="citations">Most Citations</option>
+                                <option value="shared_citations">Most Shared Citations</option>
                                 <option value="amplicon">Shortest Amplicon</option>
+                                <option value="delta_tm">Lowest Delta Tm</option>
                             </select>
                         </div>
                     </div>
@@ -219,7 +255,10 @@
         const searchForm = document.getElementById('search-form');
         const paginationContainer = document.getElementById('pagination-container');
         const sortBySelect = document.getElementById('sort-by');
-        const speciesSelect = document.getElementById('species'); // Get the species dropdown
+        const speciesSelect = document.getElementById('species');
+
+        const primerApiUrl = document.getElementById('api-primers-url').dataset.url;
+        const suggestionApiUrl = document.getElementById('api-suggestions-url').dataset.url;
 
         function resetUI(clearResults = true) {
             messageDiv.textContent = '';
@@ -257,19 +296,22 @@
                 const li = document.createElement('li');
                 li.textContent = gene;
                 li.className = 'p-2 rounded-md hover:bg-blue-100 cursor-pointer';
-                li.onclick = () => { geneInput.value = gene; search(true); };
+                li.onclick = () => {
+                    const species = speciesSelect.value;
+                    window.location.href = `${window.location.pathname}?species=${species}&gene=${gene}&autorun=true`;
+                };
                 suggestionsList.appendChild(li);
             });
             suggestionsDiv.classList.remove('hidden');
         }
 
         function getScoreColor(score) {
-            if (score >= 90) return 'bg-green-200 text-green-900';   // Dark Green
-            if (score >= 80) return 'bg-green-100 text-green-800';   // Light Green
-            if (score >= 70) return 'bg-lime-100 text-lime-800';     // Yellow-Green
-            if (score >= 60) return 'bg-yellow-100 text-yellow-800'; // Yellow
-            if (score >= 50) return 'bg-orange-100 text-orange-800'; // Orange
-            return 'bg-red-100 text-red-800';                       // Red
+            if (score >= 90) return 'bg-green-200 text-green-900';
+            if (score >= 80) return 'bg-green-100 text-green-800';
+            if (score >= 70) return 'bg-lime-100 text-lime-800';
+            if (score >= 60) return 'bg-yellow-100 text-yellow-800';
+            if (score >= 50) return 'bg-orange-100 text-orange-800';
+            return 'bg-red-100 text-red-800';
         }
 
         function getComponentScoreColor(score, max) {
@@ -280,7 +322,6 @@
         }
 
         function copyToClipboard(text, el) {
-            // Using document.execCommand for better iframe compatibility
             const textarea = document.createElement('textarea');
             textarea.value = text;
             document.body.appendChild(textarea);
@@ -302,41 +343,83 @@
                 resultsArea.classList.remove('hidden');
                 resultsHeader.textContent = `Found ${data.count} primer pairs for ${currentGene}`;
             }
-
+        
             if(data.results.length === 0 && isNewSearch) {
-                 displayMessage(`No primer pairs found for "${currentGene}" with the current filters.`);
-                 resultsArea.classList.add('hidden');
-                 return;
+                displayMessage(`No primer pairs found for "${currentGene}" with the current filters.`);
+                resultsArea.classList.add('hidden');
+                return;
             }
-
+        
             data.results.forEach((item, index) => {
                 const rank = currentItemCount + index + 1;
                 const scoreColor = getScoreColor(item.pickr_score);
-                const ampliconLength = Math.abs(Math.max(item.f_match_start, item.r_match_start, item.f_match_end, item.r_match_end) - Math.min(item.f_match_start, item.r_match_start, item.f_match_end, item.r_match_end));
+                const ampliconLength = Math.abs(Math.max(item.f_match_start, item.r_match_start, item.f_match_end, item.r_match_end) - Math.min(item.f_match_start, item.r_match_start, item.f_match_end, item.r_match_end)) + 1;
                 const avgTm = (item.f_Tm_C + item.r_Tm_C) / 2;
-
-                // Scale scores for display
+                const deltaTm = Math.abs(item.f_Tm_C - item.r_Tm_C);
+                
                 const evidenceScore = item.evidence_score * 50;
                 const biophysicsScore = item.biophysics_score * 30;
                 const synergyScore = item.synergy_score * 20;
-
+        
                 const evidenceColor = getComponentScoreColor(evidenceScore, 50);
                 const biophysicsColor = getComponentScoreColor(biophysicsScore, 30);
                 const synergyColor = getComponentScoreColor(synergyScore, 20);
-
-
+        
+                const invalidValues = [null, undefined, '', '0', '0.0', 'NaN', 'None', 'nan'];
+                
+                // --- NEW, SIMPLIFIED PARSING FUNCTION ---
+                const parseCrossSpec = (geneData, seqData) => {
+                    // Exit immediately if there is no gene data to parse.
+                    if (!geneData || invalidValues.includes(String(geneData).trim())) {
+                        return [];
+                    }
+        
+                    // Split gene and sequence strings by comma or semicolon and filter out empty items.
+                    const genes = String(geneData).split(/[;,]/).map(g => g.trim()).filter(Boolean);
+                    const seqs = seqData ? String(seqData).split(/[;,]/).map(s => s.trim()).filter(Boolean) : [];
+        
+                    // Map each gene to its corresponding sequence.
+                    return genes.map((gene, i) => {
+                        const geneParts = gene.split(':');
+                        const geneName = geneParts[0].trim();
+                        const seqFromGeneEntry = (geneParts.length > 1) ? geneParts[1].trim() : null;
+        
+                        return {
+                            gene: geneName,
+                            // Use the sequence from the "GENE:SEQ" format first.
+                            // If it's not there, use the sequence from the corresponding `seqs` array.
+                            // If neither exists, use an empty string.
+                            seq: seqFromGeneEntry || (seqs[i] || '')
+                        };
+                    });
+                };
+                
+                let fwdPerfectMatches = parseCrossSpec(item.f_cross_specificity_0, item.f_cross_specificity_0_seq);
+                let revPerfectMatches = parseCrossSpec(item.r_cross_specificity_0, item.r_cross_specificity_0_seq);
+        
+                let fwdMismatches = [];
+                let revMismatches = [];
+                for (let i = 1; i < 5; i++) {
+                    fwdMismatches.push(...parseCrossSpec(item[`f_cross_specificity_${i}`], item[`f_cross_specificity_${i}_seq`]));
+                    revMismatches.push(...parseCrossSpec(item[`r_cross_specificity_${i}`], item[`r_cross_specificity_${i}_seq`]));
+                }
+        
+                const fwdCrossSpecCount = fwdPerfectMatches.length + fwdMismatches.length;
+                const revCrossSpecCount = revPerfectMatches.length + revMismatches.length;
+        
+                const combinedCitations = (item.f_pmcid_count + item.r_pmcid_count) - item.pair_shared_pmcid_count;
+        
                 const primerCard = document.createElement('div');
                 primerCard.className = "bg-white rounded-xl shadow-lg overflow-hidden transition hover:shadow-xl";
-                // Add a new state for the citation details dropdown
                 primerCard.setAttribute('x-data', '{ open: false, scoresOpen: false, citationDetailsOpen: false }');
-
+                
+        
                 primerCard.innerHTML = `
                     <div class="p-4 md:p-6 cursor-pointer" @click="open = !open">
                         <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                             <div class="flex items-start flex-grow">
                                 <div class="text-xl md:text-2xl font-bold text-gray-400 mr-4 w-10 text-center flex-shrink-0">${rank}</div>
                                 <div class="flex-grow min-w-0">
-                                    <!-- Sequences -->
                                     <div class="font-mono text-base md:text-lg flex items-center flex-wrap">
                                         <i class="fas fa-arrow-right text-blue-500 mr-3 w-4"></i>
                                         <span class="break-all">${item.f_sequence}</span>
@@ -344,30 +427,34 @@
                                     </div>
                                     <div class="font-mono text-base md:text-lg flex items-center flex-wrap mt-1">
                                         <i class="fas fa-arrow-left text-purple-500 mr-3 w-4"></i>
-                                         <span class="break-all">${item.r_sequence}</span>
-                                         <button onclick="event.stopPropagation(); copyToClipboard('${item.r_sequence}', this)" class="ml-3 text-gray-400 hover:text-blue-600 flex-shrink-0"><i class="far fa-copy"></i></button>
+                                        <span class="break-all">${item.r_sequence}</span>
+                                        <button onclick="event.stopPropagation(); copyToClipboard('${item.r_sequence}', this)" class="ml-3 text-gray-400 hover:text-blue-600 flex-shrink-0"><i class="far fa-copy"></i></button>
                                     </div>
-
-                                    <!-- Prominent Shared Citation Count Badge -->
-                                    <div x-show="${item.pair_shared_pmcid_count > 0}" class="mt-3">
-                                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-green-100 text-green-800 shadow-sm">
-                                            <i class="fas fa-link mr-2"></i>
-                                            Cited Together in ${item.pair_shared_pmcid_count} Paper(s)
-                                        </span>
+                                    
+                                    <div class="flex items-center space-x-2 mt-3">
+                                        <div x-show="${item.pair_shared_pmcid_count > 0}">
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-green-100 text-green-800 shadow-sm">
+                                                <i class="fas fa-link mr-2"></i>
+                                                Cited Together in ${item.pair_shared_pmcid_count} Paper(s)
+                                            </span>
+                                        </div>
+                                        <div x-show="${fwdCrossSpecCount > 0 || revCrossSpecCount > 0}">
+                                            <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold bg-yellow-100 text-yellow-800 shadow-sm">
+                                                <i class="fas fa-exclamation-triangle mr-2"></i>
+                                                Off-Target Matches
+                                            </span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                            <!-- Stats Block -->
                             <div class="grid grid-cols-2 md:grid-cols-4 gap-y-4 text-center md:space-x-4 flex-shrink-0 mt-4 md:mt-0 md:justify-end">
-                                <!-- Combined Citations with Details Dropdown -->
                                 <div class="w-full">
-                                    <div class="font-bold text-lg">${item.f_pmcid_count + item.r_pmcid_count}</div>
+                                    <div class="font-bold text-lg">${combinedCitations}</div>
                                     <div class="text-xs text-gray-500">Combined Citations</div>
                                     <button @click.stop="citationDetailsOpen = !citationDetailsOpen" class="mt-1 text-xs text-gray-500 hover:text-blue-600">
                                         Details <i class="fas fa-chevron-down text-xs transition-transform" :class="citationDetailsOpen && 'rotate-180'"></i>
                                     </button>
                                 </div>
-                                <!-- Other stats -->
                                 <div class="w-full">
                                     <div class="font-bold text-lg">${ampliconLength} bp</div>
                                     <div class="text-xs text-gray-500">Amplicon</div>
@@ -387,7 +474,6 @@
                                 </div>
                             </div>
                         </div>
-                         <!-- Citation Details Dropdown Content -->
                          <div x-cloak x-show="citationDetailsOpen" x-transition class="mt-4 p-3 bg-gray-50 rounded-lg text-xs border">
                              <h4 class="font-semibold text-center mb-2">Citation Breakdown</h4>
                              <div class="text-center mb-2 border-b pb-2">
@@ -400,41 +486,34 @@
                                  <div><span class="font-bold text-pink-700">${item.r_inv_pmcid_count}</span> Rev Inverted</div>
                              </div>
                          </div>
+                         <div x-show="!open" class="text-center text-xs text-gray-400 pt-3 mt-4 border-t border-gray-200">
+                             Click for full primer pair details
+                         </div>
                     </div>
-                    <!-- Score Breakdown with Tooltips -->
                     <div x-cloak x-show="scoresOpen" x-transition class="p-4 bg-gray-50 border-t border-gray-200">
                         <h4 class="font-semibold text-center mb-2">Score Breakdown</h4>
                         <div class="flex justify-around text-center text-sm">
-                            <!-- Evidence Score with Tooltip -->
-                            <div class="relative group">
+                            <div class="relative group" title="Based on how often the primer pair is cited in literature.">
                                 <p class="font-bold ${evidenceColor}">${evidenceScore.toFixed(1)} / 50</p>
                                 <p class="text-gray-600">Evidence</p>
-                                <span class="absolute bottom-full mb-2 w-48 px-2 py-1 bg-gray-800 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none left-1/2 -translate-x-1/2">
-                                    Based on how often the primer pair is cited in literature.
-                                </span>
                             </div>
-                            <!-- Biophysics Score with Tooltip -->
-                            <div class="relative group">
+                            <div class="relative group" title="Evaluates ideal Tm, GC content, and complementarity.">
                                 <p class="font-bold ${biophysicsColor}">${biophysicsScore.toFixed(1)} / 30</p>
                                 <p class="text-gray-600">Biophysics</p>
-                                 <span class="absolute bottom-full mb-2 w-48 px-2 py-1 bg-gray-800 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none left-1/2 -translate-x-1/2">
-                                    Evaluates ideal Tm, GC content, and complementarity.
-                                </span>
                             </div>
-                            <!-- Synergy Score with Tooltip -->
-                            <div class="relative group">
+                            <div class="relative group" title="Rewards primers that perform well in both Evidence and Biophysics.">
                                 <p class="font-bold ${synergyColor}">${synergyScore.toFixed(1)} / 20</p>
                                 <p class="text-gray-600">Synergy</p>
-                                <span class="absolute bottom-full mb-2 w-48 px-2 py-1 bg-gray-800 text-white text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none left-1/2 -translate-x-1/2">
-                                    Rewards primers that perform well in both Evidence and Biophysics.
-                                </span>
                             </div>
                         </div>
+                        <div class="text-center mt-4">
+                            <a href="{% url 'about' %}#scoring" class="text-xs text-blue-600 hover:underline">
+                                More information on what these scores mean here.
+                            </a>
+                        </div>
                     </div>
-                    <!-- Main Details & Citations Section -->
                     <div x-cloak x-show="open" x-transition class="bg-gray-100 p-4 md:p-6 border-t border-gray-200">
-                       <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-8">
-                            <!-- Left Column: Forward Primer -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                             <div>
                                 <h4 class="font-semibold text-lg mb-2 text-blue-600">Forward Primer Details</h4>
                                 <div class="text-sm space-y-1">
@@ -443,10 +522,24 @@
                                     <p><strong>Length:</strong> ${item.f_sequence.length} bp</p>
                                     <p><strong>Self-Complementarity:</strong> ${item.f_self_comp.toFixed(2)}</p>
                                 </div>
-                                <p class="mt-4 font-medium text-sm">Citations (${item.f_pmcid_count}):</p>
-                                <div id="fwd-citations-${rank}" class="flex flex-wrap gap-2 mt-1 items-center"></div>
+                                <div class="mt-4">
+                                    <p class="font-semibold text-xl ${fwdCrossSpecCount === 0 ? 'text-green-600' : 'text-yellow-600'}">
+                                        Off-Target Matches: ${fwdCrossSpecCount}
+                                    </p>
+                                    <div x-show="${fwdCrossSpecCount > 0}" class="mt-2 pl-4 border-l-2 border-gray-300 space-y-4">
+                                        ${fwdPerfectMatches.length > 0 ? `<div class="text-lg font-bold text-red-600">Identical sequence match to: ${fwdPerfectMatches.map(spec => spec.gene).join(', ')}</div>` : ''}
+                                        ${fwdMismatches.map(spec => `
+                                            <div>
+                                                <p class="text-lg font-semibold">${spec.gene}</p>
+                                                <div class="font-mono text-base bg-white p-2 rounded mt-1 overflow-x-auto">
+                                                    <p class="whitespace-nowrap">${item.f_match_start}&nbsp;<span class="text-blue-500">${item.f_sequence}</span>&nbsp;${item.f_match_end}</p>
+                                                    <p class="whitespace-nowrap text-red-500">${'&nbsp;'.repeat(String(item.f_match_start).length + 1)}${spec.seq || ''}</p>
+                                                </div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
                             </div>
-                            <!-- Right Column: Reverse Primer -->
                             <div>
                                 <h4 class="font-semibold text-lg mb-2 text-purple-600">Reverse Primer Details</h4>
                                 <div class="text-sm space-y-1">
@@ -455,63 +548,80 @@
                                     <p><strong>Length:</strong> ${item.r_sequence.length} bp</p>
                                     <p><strong>Self-Complementarity:</strong> ${item.r_self_comp.toFixed(2)}</p>
                                 </div>
-                                <p class="mt-4 font-medium text-sm">Citations (${item.r_pmcid_count}):</p>
+                                <div class="mt-4">
+                                     <p class="font-semibold text-lg ${revCrossSpecCount === 0 ? 'text-green-600' : 'text-yellow-600'}">
+                                         Off-Target Matches: ${revCrossSpecCount}
+                                     </p>
+                                     <div x-show="${revCrossSpecCount > 0}" class="mt-2 pl-4 border-l-2 border-gray-300 space-y-4">
+                                         ${revPerfectMatches.length > 0 ? `<div class="text-lg font-bold text-red-600">Identical sequence match to: ${revPerfectMatches.map(spec => spec.gene).join(', ')}</div>` : ''}
+                                         ${revMismatches.map(spec => `
+                                             <div>
+                                                 <p class="text-lg font-semibold">${spec.gene}</p>
+                                                 <div class="font-mono text-base bg-white p-2 rounded mt-1 overflow-x-auto">
+                                                     <p class="whitespace-nowrap">${item.r_match_start}&nbsp;<span class="text-purple-500">${item.r_sequence}</span>&nbsp;${item.r_match_end}</p>
+                                                     <p class="whitespace-nowrap text-red-500">${'&nbsp;'.repeat(String(item.r_match_start).length + 1)}${spec.seq || ''}</p>
+                                                 </div>
+                                             </div>
+                                         `).join('')}
+                                     </div>
+                                </div>
+                            </div>
+                       </div>
+                        <hr class="my-6 border-gray-300">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                            <div>
+                                <h4 class="font-semibold text-lg mb-2">Forward Citations (${item.f_pmcid_count})</h4>
+                                <div id="fwd-citations-${rank}" class="flex flex-wrap gap-2 mt-1 items-center"></div>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-lg mb-2">Reverse Citations (${item.r_pmcid_count})</h4>
                                 <div id="rev-citations-${rank}" class="flex flex-wrap gap-2 mt-1 items-center"></div>
                             </div>
-                       </div>
-
-                       <hr class="my-6 border-gray-300">
-
-                       <!-- Combined Pair Details -->
-                       <div>
-                            <h4 class="font-semibold text-lg mb-2">Pair Details</h4>
-                            <div class="text-sm mb-4">
-                               <p><strong>Pair Complementarity:</strong> ${item.pair_comp.toFixed(2)}</p>
-                            </div>
-                           <h4 class="font-semibold text-lg mb-2 ${item.pair_shared_pmcid_count > 0 ? '' : 'text-gray-400'}">
-                                <i class="fas fa-link mr-1"></i> Shared Citations (${item.pair_shared_pmcid_count})
-                           </h4>
-                           <div id="shared-citations-${rank}" class="flex flex-wrap gap-2 mt-1 items-center"></div>
-                       </div>
+                        </div>
+                        <hr class="my-6 border-gray-300">
+                        <div>
+                             <h4 class="font-semibold text-lg mb-2">Pair Details</h4>
+                             <div class="mb-4 space-y-2">
+                                <p class="text-xl font-bold">ΔTm: <span class="text-blue-600">${deltaTm.toFixed(1)}°C</span></p>
+                                <p class="text-sm">Pair Complementarity: ${item.pair_comp.toFixed(2)}</p>
+                             </div>
+                            <h4 class="font-semibold text-lg mb-2 ${item.pair_shared_pmcid_count > 0 ? '' : 'text-gray-400'}">
+                                 <i class="fas fa-link mr-1"></i> Shared Citations (${item.pair_shared_pmcid_count})
+                            </h4>
+                            <div id="shared-citations-${rank}" class="flex flex-wrap gap-2 mt-1 items-center"></div>
+                        </div>
+                        
                     </div>
                 `;
                 resultsContainer.appendChild(primerCard);
-
-                // --- Populate the new citation sections ---
+        
                 const sharedCitations = (item.pair_shared_pmcid_list || []).map(id => ({ pmcid: id, type: 'shared' }));
-
                 const fwdCitations = [
                     ...(item.f_reg_pmcid_list || []).map(id => ({ pmcid: id, type: 'exact' })),
                     ...(item.f_inv_pmcid_list || []).map(id => ({ pmcid: id, type: 'inverted' }))
                 ];
-
                 const revCitations = [
                     ...(item.r_reg_pmcid_list || []).map(id => ({ pmcid: id, type: 'exact' })),
                     ...(item.r_inv_pmcid_list || []).map(id => ({ pmcid: id, type: 'inverted' }))
                 ];
-
-                // Call the new setup function for each section
                 setupCitationLinks(`shared-citations-${rank}`, sharedCitations);
                 setupCitationLinks(`fwd-citations-${rank}`, fwdCitations);
                 setupCitationLinks(`rev-citations-${rank}`, revCitations);
             });
-
+        
             currentItemCount += data.results.length;
             nextPageUrl = data.next;
             updatePagination();
         }
-
+        
         function setupCitationLinks(containerId, citationList) {
             const container = document.getElementById(containerId);
             if (!container || !citationList) return;
-
             if (citationList.length === 0) {
                 container.innerHTML = '<p class="text-sm text-gray-500">None</p>';
                 return;
             }
-
-            const limit = 20; // Increased limit for better viewing
-
+            const limit = 20;
             const createLinkHTML = (citation) => {
                 let icon = '';
                 let title = '';
@@ -531,9 +641,7 @@
                 }
                 return `<a href="https://pmc.ncbi.nlm.nih.gov/articles/${citation.pmcid}" target="_blank" title="${title}" class="inline-flex items-center text-xs bg-gray-200 hover:bg-gray-300 rounded px-2 py-1">${icon}${citation.pmcid}</a>`;
             };
-
             container.innerHTML = citationList.slice(0, limit).map(createLinkHTML).join('');
-
             if (citationList.length > limit) {
                 const seeAllBtn = document.createElement('button');
                 seeAllBtn.className = 'text-xs text-blue-600 underline ml-2';
@@ -559,50 +667,51 @@
 
         async function search(isNewSearch = true) {
             if (isLoading) return;
-
             if (isNewSearch) {
                 currentItemCount = 0;
             }
-
             const gene = geneInput.value.trim().toUpperCase();
             if (!gene) {
                 if (isNewSearch) displayMessage('Please enter a gene symbol.');
                 return;
             }
             currentGene = gene;
-
             setLoading(true);
             resetUI(isNewSearch);
-
             const formData = new FormData(filterForm);
             const params = new URLSearchParams();
-
-            // Add species to all API requests
             params.append('species', speciesSelect.value);
             params.append('gene', gene);
-
             for (const [key, value] of formData.entries()) {
-                // Skip the species key since we've already added it
                 if (key === 'species') continue;
                 if (value) params.append(key, value);
             }
             params.append('sort_by', sortBySelect.value);
 
+            const fullPrimerApiUrl = `${primerApiUrl}?${params.toString()}`;
+            console.log("Attempting to fetch:", fullPrimerApiUrl);
+
             try {
-                const primerResponse = await fetch(`/api/primers/?${params.toString()}`);
+                const primerResponse = await fetch(fullPrimerApiUrl);
                 if (!primerResponse.ok) {
-                    throw new Error(`Server responded with status: ${primerResponse.status}`);
+                    console.error("API Error Response:", primerResponse);
+                    const errorText = await primerResponse.text();
+                    console.error("Server Error Body:", errorText);
+                    throw new Error(`Server returned an error: ${primerResponse.status} ${primerResponse.statusText}. Check server logs.`);
                 }
                 const primerData = await primerResponse.json();
-
                 if (primerData.count > 0) {
                     renderResults(primerData, isNewSearch);
                 } else {
                     if (isNewSearch) {
-                        const suggestionResponse = await fetch(`/api/gene-suggestions/?species=${speciesSelect.value}&query=${currentGene}`);
-                        if (!suggestionResponse.ok) throw new Error('Suggestion search failed');
+                        const fullSuggestionApiUrl = `${suggestionApiUrl}?species=${speciesSelect.value}&query=${currentGene}`;
+                        console.log("No results, fetching suggestions from:", fullSuggestionApiUrl);
+                        const suggestionResponse = await fetch(fullSuggestionApiUrl);
+                        if (!suggestionResponse.ok) {
+                            console.error("Suggestion API Error Response:", suggestionResponse);
+                            throw new Error(`Suggestion API failed: ${suggestionResponse.status}`);
+                        }
                         const suggestionData = await suggestionResponse.json();
-
                         if (suggestionData.length > 0) {
                             showSuggestions(suggestionData);
                         } else {
@@ -613,8 +722,8 @@
                     }
                 }
             } catch (err) {
-                console.error(err);
-                displayMessage('An error occurred during the search. Please try again.');
+                console.error("Search failed:", err);
+                displayMessage(`An error occurred. Open the browser console (F12) for more details.`);
             } finally {
                 setLoading(false);
             }
@@ -623,7 +732,6 @@
         async function fetchMoreResults() {
             if (!nextPageUrl || isLoading) return;
             setLoading(true, true);
-
             try {
                 const response = await fetch(nextPageUrl);
                 if (!response.ok) throw new Error('Pagination failed');
@@ -639,9 +747,7 @@
 
         function resetFiltersAndSearch() {
             const gene = geneInput.value.trim().toUpperCase();
-            // Include the current species when reloading
             const species = speciesSelect.value;
-
             let url = `${window.location.pathname}?species=${species}`;
             if (gene) {
                 url += `&gene=${gene}&autorun=true`;
@@ -649,13 +755,11 @@
             window.location.href = url;
         }
 
-
         // Event Listeners
         geneInput.addEventListener('input', () => {
             searchBtn.disabled = !geneInput.value.trim();
         });
 
-        // Trigger a new search if the species is changed
         speciesSelect.addEventListener('change', () => {
              if (geneInput.value.trim()) {
                 search(true);
@@ -668,26 +772,22 @@
             }
         });
 
-        // Autorun search if URL parameters are present
         window.addEventListener('load', () => {
             const urlParams = new URLSearchParams(window.location.search);
             const speciesToSearch = urlParams.get('species');
             const geneToSearch = urlParams.get('gene');
             const shouldAutorun = urlParams.get('autorun');
-
             if (speciesToSearch) {
                 speciesSelect.value = speciesToSearch;
             }
-
             if (geneToSearch && shouldAutorun === 'true') {
                 geneInput.value = geneToSearch.toUpperCase();
                 searchBtn.disabled = false;
                 search(true);
+            } else {
+                searchBtn.disabled = !geneInput.value.trim();
             }
         });
-
-        // Init
-        searchBtn.disabled = !geneInput.value.trim();
     </script>
 
 </body>
