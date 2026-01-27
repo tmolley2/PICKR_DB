@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 100 100'%3e%3cpath d='M45,15 C20,25 20,75 45,85' stroke='%232563eb' stroke-width='8' fill='none' stroke-linecap='round'/%3e%3cpath d='M55,15 C80,25 80,75 55,85' stroke='%232563eb' stroke-width='8' fill='none' stroke-linecap='round'/%3e%3cline x1='45' y1='25' x2='55' y2='25' stroke='%232563eb' stroke-width='8' stroke-linecap='round'/%3e%3cline x1='42' y1='35' x2='58' y2='35' stroke='%232563eb' stroke-width='8' stroke-linecap='round'/%3e%3cline x1='40' y1='45' x2='60' y2='45' stroke='%232563eb' stroke-width='8' stroke-linecap='round'/%3e%3cline x1='42' y1='55' x2='58' y2='55' stroke='%232563eb' stroke-width='8' stroke-linecap='round'/%3e%3cline x1='45' y1='65' x2='55' y2='65' stroke='%232563eb' stroke-width='8' stroke-linecap='round'/%3e%3cline x1='48' y1='75' x2='52' y2='75' stroke='%232563eb' stroke-width='8' stroke-linecap='round'/%3e%3c/svg%3e">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gene List - Primer PICKR</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm sticky top-0 z-20">
+        <div class="container mx-auto px-4 sm:px-6">
+            <div class="flex justify-between items-center py-4">
+                <a href="{% url 'home' %}" class="flex items-center space-x-2 text-gray-800 hover:text-blue-600 transition">
+                    <i class="fas fa-dna text-blue-600 text-2xl"></i>
+                    <h1 class="text-2xl font-bold">Primer PICKR</h1>
+                </a>
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="{% url 'about' %}" class="text-gray-600 hover:text-blue-600">About</a>
+                    <a href="{% url 'how' %}" class="text-gray-600 hover:text-blue-600">How to use PICKR</a>
+                    <a href="{% url 'gene_list' %}" class="text-gray-600 hover:text-blue-600 font-semibold text-blue-600">Gene List</a>
+                    <a href="{% url 'contact' %}" class="text-gray-600 hover:text-blue-600">Contact</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto max-w-screen-xl px-4 sm:px-6 py-12">
+        <div class="max-w-6xl mx-auto">
+            <header class="text-center mb-12">
+                <h2 class="text-4xl font-bold text-gray-800">Available Genes</h2>
+                <p class="text-gray-600 mt-2 text-lg">Browse all genes with primer data in our database.</p>
+            </header>
+
+            <div class="bg-white rounded-xl shadow-lg p-8">
+
+                <!-- Tabs -->
+                <div class="border-b border-gray-200">
+                    <nav class="-mb-px flex space-x-8 overflow-x-auto" aria-label="Tabs">
+                        <a href="?species=human" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg {% if active_species == 'human' %}border-blue-500 text-blue-600{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %}">
+                            Human
+                        </a>
+                        <a href="?species=mouse" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg {% if active_species == 'mouse' %}border-blue-500 text-blue-600{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %}">
+                            Mouse
+                        </a>
+                        <a href="?species=rat" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg {% if active_species == 'rat' %}border-blue-500 text-blue-600{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %}">
+                            Rat
+                        </a>
+                        <a href="?species=cow" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg {% if active_species == 'cow' %}border-blue-500 text-blue-600{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %}">
+                            Bovine
+                        </a>
+                        <a href="?species=pig" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg {% if active_species == 'pig' %}border-blue-500 text-blue-600{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %}">
+                            Porcine
+                        </a>
+                        <a href="?species=fly" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg {% if active_species == 'fly' %}border-blue-500 text-blue-600{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %}">
+                            Drosophila
+                        </a>
+                        <a href="?species=frog" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg {% if active_species == 'frog' %}border-blue-500 text-blue-600{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %}">
+                            Xenopus
+                        </a>
+                        <a href="?species=worm" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg {% if active_species == 'worm' %}border-blue-500 text-blue-600{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %}">
+                            C. Elegans
+                        </a>
+                        <a href="?species=monkey" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg {% if active_species == 'monkey' %}border-blue-500 text-blue-600{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %}">
+                            Rhesus
+                        </a>
+                        <a href="?species=zebrafish" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-lg {% if active_species == 'zebrafish' %}border-blue-500 text-blue-600{% else %}border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300{% endif %}">
+                            Zebrafish
+                        </a>
+                    </nav>
+                </div>
+
+                <!-- Alphabetical Filter -->
+                <div class="mt-6 flex flex-wrap justify-center gap-2">
+                    <a href="?species={{ active_species }}" class="px-3 py-1 text-sm rounded-md {% if not selected_letter %}bg-blue-600 text-white{% else %}bg-gray-200 hover:bg-gray-300{% endif %}">All</a>
+                    {% for letter in alphabet %}
+                        <a href="?species={{ active_species }}&letter={{ letter }}" class="px-3 py-1 text-sm rounded-md {% if selected_letter == letter %}bg-blue-600 text-white{% else %}bg-gray-200 hover:bg-gray-300{% endif %}">
+                            {{ letter }}
+                        </a>
+                    {% endfor %}
+                </div>
+
+                <!-- Gene List -->
+                <div class="mt-6">
+                    <!-- FIX: Use Tailwind CSS columns for vertical ordering -->
+                    <ul class="columns-2 sm:columns-3 md:columns-4 lg:columns-5 gap-x-6">
+                        {% for gene in page_obj %}
+                        <li class="mb-1">
+                            <!-- FIX: Removed background and added hover effect -->
+                            <a href="{% url 'home' %}?species={{ active_species }}&gene={{ gene }}&autorun=true" class="block p-1 text-gray-700 hover:text-blue-600 rounded-md transition font-mono text-sm">
+                                {{ gene }}
+                            </a>
+                        </li>
+                        {% empty %}
+                        <li class="col-span-full text-center text-gray-500 py-8">No genes found for this filter.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- Pagination Controls -->
+                <nav class="mt-8 flex items-center justify-between border-t border-gray-200 px-4 sm:px-0">
+                    <div class="-mt-px flex w-0 flex-1">
+                        {% if page_obj.has_previous %}
+                            <a href="?species={{ active_species }}&letter={{ selected_letter }}&page={{ page_obj.previous_page_number }}" class="inline-flex items-center border-t-2 border-transparent pr-1 pt-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700">
+                                <i class="fas fa-arrow-left mr-3"></i>
+                                Previous
+                            </a>
+                        {% endif %}
+                    </div>
+                    <div class="hidden md:-mt-px md:flex">
+                        <span class="inline-flex items-center border-t-2 border-transparent px-4 pt-4 text-sm font-medium text-gray-500">
+                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                        </span>
+                    </div>
+                    <div class="-mt-px flex w-0 flex-1 justify-end">
+                        {% if page_obj.has_next %}
+                            <a href="?species={{ active_species }}&letter={{ selected_letter }}&page={{ page_obj.next_page_number }}" class="inline-flex items-center border-t-2 border-transparent pl-1 pt-4 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700">
+                                Next
+                                <i class="fas fa-arrow-right ml-3"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                </nav>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white mt-16 py-8 border-t">
+        <div class="container mx-auto px-4 sm:px-6 text-center text-gray-500">
+            <p>&copy; 2025 Primer PICKR. All rights reserved.</p>
+            <p class="text-sm">Data sourced from PubMed. Not for clinical use.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

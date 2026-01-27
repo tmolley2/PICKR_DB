@@ -1,0 +1,7 @@
+User-agent: *
+# Block anything with a “?” in the path
+Disallow: /*?*
+# Optionally allow your main pages
+Allow: /$
+# Point to your sitemap
+Sitemap: https://www.primerpickr.com/sitemap.xml

@@ -45,6 +45,7 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'primers.apps.PrimersConfig',
+    'genes', # Add the new app
 ]
 
 MIDDLEWARE = [
