@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+message: "If you use this dataset, please cite the Nature Communications paper."
+title: "Primer PICKR Database"
+abstract: >
+  Literature-mined and biophysically-scored RT-qPCR primer pairs across 40
+  species. Companion data release for the Primer PICKR Nature Communications
+  paper.
+authors:
+  - family-names: Molley
+    given-names: Thomas G.
+  - family-names: Banerjee
+    given-names: Abhishek
+  - family-names: Balayan
+    given-names: Anjelika
+license: CC-BY-NC-ND-4.0
+url: "https://www.primerpickr.com"
+preferred-citation:
+  type: article
+  title: "Primer PICKR: literature-mined scoring platform for robust RT-qPCR primers"
+  authors:
+    - family-names: Molley
+      given-names: Thomas G.
+    - family-names: Banerjee
+      given-names: Abhishek
+    - family-names: Balayan
+      given-names: Anjelika
+  journal: "Nature Communications"
+  year: 2026
+  doi: "10.1038/s41467-026-73648-2"
